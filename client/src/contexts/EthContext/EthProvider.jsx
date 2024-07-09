@@ -2,7 +2,7 @@ import React, { useReducer, useCallback, useEffect } from 'react'
 import Web3 from 'web3'
 import EthContext from './EthContext'
 import { reducer, actions, initialState } from './state'
-import artifact from '../../contracts/EHR.json'
+import artifact from '../../../../hardhat/artifacts/contracts/EHR.sol/EHR.json'
 
 function EthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -10,7 +10,13 @@ function EthProvider({ children }) {
   const init = useCallback(async artifact => {
     console.log(artifact);
     if (artifact) {
-      const web3 = new Web3(Web3.givenProvider || 'HTTP://127.0.0.1:7545');
+      const web3 = new Web3(Web3.givenProvider || 'ws://127.0.0.1:8545');
+      console.log('web3');
+      web3.eth.requestAccounts().then((accounts) => {
+        console.log('accounts');
+        console.log(accounts);
+
+      })
       const accounts = await web3.eth?.requestAccounts();
       const networkID = await web3.eth?.net.getId();
       console.log(networkID)
@@ -18,8 +24,10 @@ function EthProvider({ children }) {
       let address, contract;
 
       try {
-        address = artifact.networks['5777'].address;
+        address = '0x5FbDB2315678afecb367f032d93F642f64180aa3'
         console.log(address);
+        console.log(abi);
+
         contract = new web3.eth.Contract(abi, address);
         console.log(contract)
       } catch (err) {
