@@ -1,6 +1,5 @@
 import { Box, Divider, FormControl, Modal, TextField, Typography, Backdrop, CircularProgress } from '@mui/material'
-import React, { useCallback } from 'react'
-import { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import CustomButton from '../../components/CustomButton'
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
 import useEth from '../../contexts/EthContext/useEth'
@@ -8,10 +7,12 @@ import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded'
 import useAlert from '../../contexts/AlertContext/useAlert'
 import AddRecordModal from './AddRecordModal'
 import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded'
-// import ipfs from '../../ipfs'
 import Record from '../../components/Record'
 
+import { createHelia } from 'helia'
+import { unixfs } from '@helia/unixfs'
 const Doctor = () => {
+
   const { setAlert } = useAlert()
 
   const eth = useEth()
@@ -33,7 +34,15 @@ const Doctor = () => {
         setAlert('Please enter a valid wallet address', 'error')
         return
       }
-      const patientExists = await contract.methods.getPatientExists(searchPatientAddress).call({ from: accounts[0] })
+      console.log(accounts);
+      const meths = await contract.methods
+      console.log(meths)
+      console.log('searchPatientAddress');
+      console.log(searchPatientAddress);
+      // const patientExists = await contract.methods.getPatientExists(searchPatientAddress).call({ from: accounts[0] })
+      const patientExists = true;
+      console.log('patientExists returns', patientExists);
+
       if (patientExists) {
         const records = await contract.methods.getRecords(searchPatientAddress).call({ from: accounts[0] })
         console.log('records :>> ', records)
@@ -43,15 +52,17 @@ const Doctor = () => {
         setAlert('Patient does not exist', 'error')
       }
     } catch (err) {
-      console.error(err)
+      console.error('searchPatient', err)
     }
   }
 
   const registerPatient = async () => {
+    console.log(contract);
     try {
-      await contract.methods.addPatient(addPatientAddress).send({ from: accounts[0] })
+      const addr = await contract.methods.addPatient(addPatientAddress).send({ from: accounts[0] });
+      console.log('Patient added at addres', addr);
     } catch (err) {
-      console.error(err)
+      console.error('registerPatient', err)
     }
   }
 
@@ -60,22 +71,32 @@ const Doctor = () => {
       if (!patientAddress) {
         setAlert('Please search for a patient first', 'error')
         return
+
       }
       try {
-        // const res = await ipfs.add(buffer)
-        // const ipfsHash = res[0].hash
-        // if (ipfsHash) {
-        //   await contract.methods.addRecord(ipfsHash, fileName, patientAddress).send({ from: accounts[0] })
-        //   setAlert('New record uploaded', 'success')
-        //   setAddRecord(false)
 
-        //   // refresh records
-        //   const records = await contract.methods.getRecords(patientAddress).call({ from: accounts[0] })
-        //   setRecords(records)
-        // }
+
+        // Create the Helia instance
+        const helia = await createHelia();
+
+        // Create the UnixFS instance
+        const fs = unixfs(helia)
+
+        // Add the file to IPFS using Helia
+        const res = await fs.add(buffer);
+        const ipfsHash = res.cid.toString();
+        if (ipfsHash) {
+          await contract.methods.addRecord(ipfsHash, fileName, patientAddress).send({ from: accounts[0] });
+          setAlert('New record uploaded', 'success');
+          setAddRecord(false);
+
+          // Refresh records
+          const records = await contract.methods.getRecords(patientAddress).call({ from: accounts[0] });
+          setRecords(records);
+        }
       } catch (err) {
-        setAlert('Record upload failed', 'error')
-        console.error(err)
+        setAlert('Record upload failed', 'error');
+        console.error(err);
       }
     },
     [addPatientAddress, accounts, contract]
