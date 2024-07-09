@@ -2,8 +2,8 @@ import { AppBar, Chip, Toolbar, Box, Typography } from '@mui/material'
 import React from 'react'
 import useEth from '../../contexts/EthContext/useEth'
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
-import logo from '../../assets/tealNoBG-cropped.png'
-import { grey, teal } from '@mui/material/colors'
+import logo from '../../assets/logo.png'
+import { grey, blue } from '@mui/material/colors'
 
 const HeaderAppBar = () => {
   const {
@@ -14,8 +14,9 @@ const HeaderAppBar = () => {
     <AppBar position='static' style={{ backgroundColor: 'white' }}>
       <Toolbar>
         <Box display='flex' justifyContent='space-between' alignItems='center' width='100%'>
-          <a href='/'>
-            <img src={logo} alt='med-chain-logo' style={{ height: 20, weight: 20 }} />
+          <a href='/' style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+            <img src={logo} alt='med-chain-logo' style={{ height: 40, weight: 40 }} />
+            <span style={{ color: 'blue', fontSize: '2.5rem' }}>Medisafe</span>
           </a>
           <Box flexGrow={1} />
           <Box display='flex' alignItems='center'>
@@ -29,7 +30,7 @@ const HeaderAppBar = () => {
             </Box>
             <Chip
               label={role === 'unknown' ? 'not registered' : role}
-              style={{ fontSize: '12px', backgroundColor: teal['A700'], color: 'white' }}
+              style={{ fontSize: '12px', backgroundColor: blue['A700'], color: 'white' }}
             />
           </Box>
         </Box>
