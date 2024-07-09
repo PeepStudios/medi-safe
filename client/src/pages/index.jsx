@@ -1,27 +1,24 @@
 import { Box, Typography, Backdrop, CircularProgress, Divider } from '@mui/material'
 import React from 'react'
-import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceWalletRounded'
-// import VideoCover from 'react-video-cover'
-import BackgroundVideo from '../assets/BackgroundVideo.mp4'
-import logo from '../assets/tealNoBG-cropped.png'
+import logo from '../assets/logo.png'
 import useEth from '../contexts/EthContext/useEth'
 import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded'
 import CustomButton from '../components/CustomButton'
 import { useNavigate } from 'react-router-dom'
 import LoginRoundedIcon from '@mui/icons-material/LoginRounded'
-import { grey } from '@mui/material/colors'
 import '../App.css'
 
 const Home = () => {
-  
-  const eth = useEth()
-  const accounts = eth?.state?.accounts
-  const role = eth?.state?.role
-  const loading = eth?.state?.loading
-  const contract = eth?.state?.contract
-  const dispatch = eth?.dispatch
-  
+
+  const eth = useEth();
+  const accounts = eth?.state?.accounts;
+  const role = eth?.state?.role;
+  const loading = eth?.state?.loading;
+  const contract = eth?.state?.contract;
+  const dispatch = eth?.dispatch;
+
   const navigate = useNavigate()
+  console.log(eth.state)
 
   const registerDoctor = async () => {
     try {
@@ -37,7 +34,7 @@ const Home = () => {
   const ActionSection = () => {
     if (!accounts) {
       return (
-        <Typography variant='h5' color='white'>
+        <Typography variant='h5' color='gray'>
           Open your MetaMask wallet to get connected, then refresh this page
         </Typography>
       )
@@ -47,10 +44,10 @@ const Home = () => {
           <Box display='flex' flexDirection='column' alignItems='center'>
             <Box mb={2}>
               <CustomButton text='Doctor Register' handleClick={() => registerDoctor()}>
-                <PersonAddAlt1RoundedIcon style={{ color: 'white' }} />
+                <PersonAddAlt1RoundedIcon style={{ color: 'gray' }} />
               </CustomButton>
             </Box>
-            <Typography variant='h5' color='white'>
+            <Typography variant='h5' color='gray'>
               If you are a patient, ask your doctor to register for you
             </Typography>
           </Box>
@@ -58,13 +55,13 @@ const Home = () => {
       } else if (role === 'patient') {
         return (
           <CustomButton text='Patient Portal' handleClick={() => navigate('/patient')}>
-            <LoginRoundedIcon style={{ color: 'white' }} />
+            <LoginRoundedIcon style={{ color: 'gray' }} />
           </CustomButton>
         )
       } else if (role === 'doctor') {
         return (
           <CustomButton text='Doctor Portal' handleClick={() => navigate('/doctor')}>
-            <LoginRoundedIcon style={{ color: 'white' }} />
+            <LoginRoundedIcon style={{ color: 'gray' }} />
           </CustomButton>
         )
       }
@@ -99,25 +96,21 @@ const Home = () => {
             zIndex: -1,
           }}
         >
-          {/* <VideoCover
-            videoOptions={{
-              src: BackgroundVideo,
-              autoPlay: true,
-              loop: true,
-              muted: true,
-            }}
-          /> */}
+
         </Box>
         <Box id='home-page-box' display='flex' flexDirection='column' justifyContent='center' alignItems='center' p={5}>
-          <img src={logo} alt='med-chain-logo' style={{ height: 50 }} />
+          <a href='/' style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+            <img src={logo} alt='med-chain-logo' style={{ height: 60, weight: 60 }} />
+            <span style={{ color: 'blue', fontSize: '2.5rem' }}>MediSafe</span>
+          </a>
           <Box mt={2} mb={5}>
-            <Typography variant='h4' color='white'>
-              Own Your Health
+            <Typography variant='h4' color='gray' style={{ textAlign: 'center' }}>
+              Secure Sharing for Better Healthcare.
             </Typography>
           </Box>
           <ActionSection />
           <Box display='flex' alignItems='center' mt={2}>
-            <Typography variant='h5' color='white'>
+            <Typography variant='h5' color='gray'>
               powered by{' '}
             </Typography>
             <Box mx={1}>
