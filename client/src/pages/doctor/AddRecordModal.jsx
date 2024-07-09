@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, forwardRef } from 'react'
 import CustomButton from '../../components/CustomButton'
 import { DropzoneAreaBase } from 'material-ui-dropzone'
 import { Box, Chip, IconButton, Typography } from '@mui/material'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import useAlert from '../../contexts/AlertContext/useAlert'
 
-const AddRecordModal = ({ handleClose, handleUpload, patientAddress }) => {
+const AddRecordModal = forwardRef(({ handleClose, handleUpload, patientAddress }, ref) => {
   const { setAlert } = useAlert()
   const [file, setFile] = useState(null)
   const [buffer, setBuffer] = useState(null)
@@ -26,12 +26,13 @@ const AddRecordModal = ({ handleClose, handleUpload, patientAddress }) => {
 
   return (
     <Box
+      ref={ref}
       sx={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        weight: '100vw',
+        width: '100vw',
       }}
     >
       <Box
@@ -47,7 +48,7 @@ const AddRecordModal = ({ handleClose, handleUpload, patientAddress }) => {
         position='relative'
       >
         <Box position='absolute' sx={{ top: 5, right: 5 }}>
-          <IconButton onClick={() => handleClose()}>
+          <IconButton onClick={handleClose}>
             <CloseRoundedIcon />
           </IconButton>
         </Box>
@@ -56,7 +57,7 @@ const AddRecordModal = ({ handleClose, handleUpload, patientAddress }) => {
           <Box my={2}>
             <DropzoneAreaBase
               onAdd={fileObjs => handleFileChange(fileObjs[0])}
-              onDelete={fileObj => {
+              onDelete={() => {
                 setFile(null)
                 setBuffer(null)
               }}
@@ -76,6 +77,6 @@ const AddRecordModal = ({ handleClose, handleUpload, patientAddress }) => {
       </Box>
     </Box>
   )
-}
+})
 
 export default AddRecordModal
