@@ -8,30 +8,33 @@ function EthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const init = useCallback(async artifact => {
-    console.log(artifact);
+    console.log('artifact loaded');
+    console.log(artifact)
     if (artifact) {
-      const web3 = new Web3(Web3.givenProvider || 'ws://127.0.0.1:8545');
-      console.log('web3');
-      web3.eth.requestAccounts().then((accounts) => {
-        console.log('accounts');
-        console.log(accounts);
-
-      })
-      const accounts = await web3.eth?.requestAccounts();
+      const web3 = new Web3(Web3.givenProvider || 'http://127.0.0.1:8545');
       const networkID = await web3.eth?.net.getId();
-      console.log(networkID)
       const { abi } = artifact;
-      let address, contract;
+
+
+      const address = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+
+      const contract = new web3.eth.Contract(abi, address);
+      console.warn();
+
+      const accounts = await web3.eth.getAccounts();
+
+      const sender = accounts[0];
+
+
 
       try {
-        address = '0x5FbDB2315678afecb367f032d93F642f64180aa3'
-        console.log(address);
-        console.log(abi);
+        const role = await contract.methods.getSenderRole().call({ from: sender });
+        let role2 = await contract.getSenderRole();
+        console.warn('role2', role2);
 
-        contract = new web3.eth.Contract(abi, address);
-        console.log(contract)
-      } catch (err) {
-        console.error(err);
+        console.log(`Sender role: ${role}`);
+      } catch (error) {
+        console.error('Contract error', error);
       }
 
       let role = 'unknown'
@@ -50,7 +53,7 @@ function EthProvider({ children }) {
       })
     }
   }, [])
-  console.log('use effect ...... 1');
+
 
   useEffect(() => {
     const tryInit = async () => {
